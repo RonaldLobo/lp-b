@@ -1,0 +1,13 @@
+{
+    "name": "vendor/mi-comunidad",
+    "description": "Description of project MiComunidad.",
+    "authors": [
+        {
+            "name": "Macbook",
+            "email": "your@email.here"
+        }
+    ],
+    "require": {
+        "doctrine/orm": "*"
+    }
+}

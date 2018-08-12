@@ -1,0 +1,153 @@
+CREATE DATABASE barber_1;
+
+USE barber_1;
+
+
+create table Provincia(
+PkIdProvincia int AUTO_INCREMENT PRIMARY KEY,
+Provincia  varchar(100),
+Estado boolean NOT NULL
+);
+
+create table Canton(
+PkIdCanton int AUTO_INCREMENT PRIMARY KEY,
+FkIdProvinciaCanton int NOT NULL,
+Canton varchar(100),
+Estado boolean NOT NULL
+);
+ALTER TABLE Canton ADD CONSTRAINT FkIdProvinciaCanton FOREIGN KEY (FkIdProvinciaCanton) REFERENCES Provincia (PkIdProvincia);
+
+
+create table Distrito(
+PkIdDistrito int AUTO_INCREMENT PRIMARY KEY,
+FkIdCantonDistrito int NOT NULL,
+Distrito  varchar(100),
+Estado boolean NOT NULL
+);
+ALTER TABLE Distrito ADD CONSTRAINT FkIdCantonDistrito FOREIGN KEY (FkIdCantonDistrito ) REFERENCES Canton(PkIdCanton);
+
+
+create table Barberia(
+PkIdBarberia int AUTO_INCREMENT PRIMARY KEY,
+Nombre varchar(200) NOT NULL,
+Descripcion varchar(500),
+Estado boolean NOT NULL
+);
+
+
+create table SucursalBarberia(
+PkIdSucursalBarberia int AUTO_INCREMENT PRIMARY KEY,
+FkIdDistritoSucursalBarberia int,
+FkIdBarberiaSucursalBarberia int NOT NULL,
+Descripcion varchar(500),
+DetalleDireccion varchar(500),
+Latitud varchar(50),
+Longitud  varchar(50),
+Estado boolean NOT NULL
+);
+ALTER TABLE SucursalBarberia ADD CONSTRAINT FkIdDistritoSucursalBarberia FOREIGN KEY (FkIdDistritoSucursalBarberia ) REFERENCES Distrito(PkIdDistrito);
+ALTER TABLE SucursalBarberia ADD CONSTRAINT FkIdBarberiaSucursalBarberia FOREIGN KEY (FkIdBarberiaSucursalBarberia) REFERENCES Barberia(PkIdBarberia);
+
+create table TelefonoSucursal(
+PkIdTelefonoSucursal int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaTelefono int NOT NULL,
+Telefono int NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE TelefonoSucursal ADD CONSTRAINT FkIdSucursalBarberiaTelefono FOREIGN KEY (FkIdSucursalBarberiaTelefono) REFERENCES SucursalBarberia(PkIdSucursalBarberia);
+
+create table EmailSucursal(
+PkIdEmailSucursal int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaEmail int NOT NULL,
+Email varchar(100) NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE EmailSucursal ADD CONSTRAINT FkIdSucursalBarberiaEmail  FOREIGN KEY (FkIdSucursalBarberiaEmail) REFERENCES SucursalBarberia(PkIdSucursalBarberia);
+
+
+create table Usuarios(
+PkIdUsuario int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaUsuario int NOT NULL,
+Nombre varchar(100) NOT NULL,
+PrimerApellido varchar(50) NOT NULL,
+SegundoApellido varchar(50) NOT NULL,
+Usuario varchar(50) NOT NULL,
+Contrasenna varchar(50) NOT NULL,
+Tipo char(1) NOT NULL,
+Estado boolean NOT NULL,
+Rol char(1)
+);
+ALTER TABLE Usuarios ADD CONSTRAINT FkIdSucursalBarberiaUsuario FOREIGN KEY (FkIdSucursalBarberiaUsuario) REFERENCES SucursalBarberia (PkIdSucursalBarberia);
+
+
+create table TelefonoUsuario(
+PkIdTelefonoUsuario int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioTelefono int NOT NULL,
+Telefono int NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE TelefonoUsuario ADD CONSTRAINT FkIdUsuarioTelefono FOREIGN KEY (FkIdUsuarioTelefono) REFERENCES Usuarios(PkIdUsuario);
+
+create table EmailUsuario(
+PkIdEmailUsuario int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioEmail int NOT NULL,
+Email varchar(100) NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE EmailUsuario ADD CONSTRAINT FkIdUsuarioEmail FOREIGN KEY (FkIdUsuarioEmail) REFERENCES Usuarios(PkIdUsuario);
+
+
+create table HorarioSucursal(
+PkIdHorarioSucursal int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaHorariosSucursal int NOT NULL,
+Dia char(1) NOT NULL,
+HoraInicial time NOT NULL,
+HoraFinal time NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE HorarioSucursal ADD CONSTRAINT FkIdSucursalBarberiaHorariosSucursal FOREIGN KEY (FkIdSucursalBarberiaHorariosSucursal) REFERENCES SucursalBarberia (PkIdSucursalBarberia);
+
+
+create table HorarioBarbero(
+PkIdHorarioBarbero int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioHorarioBarbero int NOT NULL,
+Dia char(1) NOT NULL,
+HoraInicial time NOT NULL,
+HoraFinal time NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE HorarioBarbero ADD CONSTRAINT FkIdUsuarioHorarioBarbero FOREIGN KEY (FkIdUsuarioHorarioBarbero) REFERENCES Usuarios (PkIdUsuario);
+
+
+create table Servicio(
+PkIdServicio int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaServicio int NOT NULL,
+Descripcion varchar(400) NOT NULL,
+Duracion varchar(10) NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE Servicio ADD CONSTRAINT FkIdSucursalBarberiaServicio FOREIGN KEY (FkIdSucursalBarberiaServicio) REFERENCES SucursalBarberia (PkIdSucursalBarberia);
+
+create table Reserva(
+PkIdReserva int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaReserva int NOT NULL,
+FkIdUsuarioReserva int NOT NULL,
+FkIdServicioReserva int NOT NULL,
+Dia char(1) NOT NULL,
+HoraInicial time NOT NULL,
+HoraFinal time NOT NULL,
+Estado boolean NOT NULL
+);
+
+ALTER TABLE Reserva ADD CONSTRAINT FkIdSucursalBarberiaReserva FOREIGN KEY (FkIdSucursalBarberiaReserva) REFERENCES SucursalBarberia (PkIdSucursalBarberia);
+ALTER TABLE Reserva ADD CONSTRAINT FkIdUsuarioReserva FOREIGN KEY (FkIdUsuarioReserva) REFERENCES Usuarios (PkIdUsuario);
+ALTER TABLE Reserva ADD CONSTRAINT FkIdServicioReserva FOREIGN KEY (FkIdServicioReserva) REFERENCES Servicio (PkIdServicio);
+
+
+
+INSERT INTO `provincia` (`PkIdProvincia`, `Provincia`, `Estado`) VALUES (NULL, 'Alajuela', '1');
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '1', 'San Ramon', '1');
+INSERT INTO `distrito` (`PkIdDistrito`, `FkIdCantonDistrito`, `Distrito`, `Estado`) VALUES (NULL, '1', 'San Ramon', '1');
+INSERT INTO `barberia` (`PkIdBarberia`, `Nombre`, `Descripcion`, `Estado`) VALUES (NULL, 'Tapia', 'Tapia', '1');
+
+INSERT INTO `usuarios` (`PkIdUsuario`, `FkIdSucursalBarberiaUsuario`, `Nombre`, `PrimerApellido`, `SegundoApellido`, `Usuario`, `Contrasenna`, `Tipo`, `Estado`) VALUES (NULL, '2', 'Amor', 'Lobo', 'Porras', 'amor', '123', 'A', '1');

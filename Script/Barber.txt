@@ -1,0 +1,151 @@
+CREATE DATABASE barber_1;
+
+USE barber_1;
+
+create table Provincia(
+PkIdProvincia int AUTO_INCREMENT PRIMARY KEY,
+Provincia  varchar(100),
+Estado boolean NOT NULL
+);
+
+create table Canton(
+PkIdCanton int AUTO_INCREMENT PRIMARY KEY,
+FkIdProvinciaCanton int NOT NULL,
+Canton varchar(100),
+Estado boolean NOT NULL
+);
+ALTER TABLE Canton ADD CONSTRAINT FkIdProvinciaCanton FOREIGN KEY (FkIdProvinciaCanton) REFERENCES Provincia (PkIdProvincia);
+
+
+create table Barberia(
+PkIdBarberia int AUTO_INCREMENT PRIMARY KEY,
+Nombre varchar(200) NOT NULL,
+Descripcion varchar(500),
+Estado boolean NOT NULL
+);
+
+create table SucursalBarberia(
+PkIdSucursalBarberia int AUTO_INCREMENT PRIMARY KEY,
+FkIdCantonSucursalBarberia int,
+FkIdBarberiaSucursalBarberia int NOT NULL,
+Descripcion varchar(500),
+DetalleDireccion varchar(500),
+Estado boolean NOT NULL
+);
+ALTER TABLE SucursalBarberia ADD CONSTRAINT FkIdCantonSucursalBarberia FOREIGN KEY (FkIdCantonSucursalBarberia) REFERENCES Canton(PkIdCanton);
+ALTER TABLE SucursalBarberia ADD CONSTRAINT FkIdBarberiaSucursalBarberia FOREIGN KEY (FkIdBarberiaSucursalBarberia) REFERENCES Barberia(PkIdBarberia);
+
+create table TelefonoSucursal(
+PkIdTelefonoSucursal int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaTelefono int NOT NULL,
+Telefono int NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE TelefonoSucursal ADD CONSTRAINT FkIdSucursalBarberiaTelefono FOREIGN KEY (FkIdSucursalBarberiaTelefono) REFERENCES SucursalBarberia(PkIdSucursalBarberia);
+
+create table EmailSucursal(
+PkIdEmailSucursal int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaEmail int NOT NULL,
+Email varchar(100) NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE EmailSucursal ADD CONSTRAINT FkIdSucursalBarberiaEmail  FOREIGN KEY (FkIdSucursalBarberiaEmail) REFERENCES SucursalBarberia(PkIdSucursalBarberia);
+
+
+create table Usuarios(
+PkIdUsuario int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaUsuario int NOT NULL,
+Nombre varchar(100) NOT NULL,
+PrimerApellido varchar(50) NOT NULL,
+SegundoApellido varchar(50) NOT NULL,
+Usuario varchar(50) NOT NULL,
+Contrasenna varchar(50) NOT NULL,
+Tipo char(1) NOT NULL,
+Estado boolean NOT NULL,
+Rol char(2) NOT NULL,
+TiempoBarbero int
+);
+ALTER TABLE Usuarios ADD CONSTRAINT FkIdSucursalBarberiaUsuario FOREIGN KEY (FkIdSucursalBarberiaUsuario) REFERENCES SucursalBarberia (PkIdSucursalBarberia);
+
+
+create table TelefonoUsuario(
+PkIdTelefonoUsuario int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioTelefono int NOT NULL,
+Telefono int NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE TelefonoUsuario ADD CONSTRAINT FkIdUsuarioTelefono FOREIGN KEY (FkIdUsuarioTelefono) REFERENCES Usuarios(PkIdUsuario);
+
+create table EmailUsuario(
+PkIdEmailUsuario int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioEmail int NOT NULL,
+Email varchar(100) NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE EmailUsuario ADD CONSTRAINT FkIdUsuarioEmail FOREIGN KEY (FkIdUsuarioEmail) REFERENCES Usuarios(PkIdUsuario);
+
+create table HorarioBarbero(
+PkIdHorarioBarbero int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioHorarioBarbero int NOT NULL,
+Dia char(1) NOT NULL,
+HoraInicial time NOT NULL,
+HoraFinal time NOT NULL,
+Estado boolean NOT NULL
+);
+ALTER TABLE HorarioBarbero ADD CONSTRAINT FkIdUsuarioHorarioBarbero FOREIGN KEY (FkIdUsuarioHorarioBarbero) REFERENCES Usuarios (PkIdUsuario);
+
+
+create table PausaHorarioBarbero(
+PkIdPausaHorarioBarbero int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioPausaHorarioBarbero int NOT NULL,
+Dia char(1),
+HoraInicial time NOT NULL,
+Duracion int NOT NULL,
+Fecha Date, 
+Estado boolean NOT NULL
+);
+ALTER TABLE PausaHorarioBarbero ADD CONSTRAINT FkIdUsuarioPausaHorarioBarbero FOREIGN KEY (FkIdUsuarioPausaHorarioBarbero) REFERENCES Usuarios (PkIdUsuario);
+
+
+create table Servicio(
+PkIdServicio int AUTO_INCREMENT PRIMARY KEY,
+FkIdUsuarioServicio int NOT NULL,
+Descripcion varchar(400) NOT NULL,
+Duracion varchar(10) NOT NULL,
+Estado boolean NOT NULL,
+Precio numeric(18,2)
+);
+ALTER TABLE Servicio ADD CONSTRAINT FkIdUsuarioServicio FOREIGN KEY (FkIdUsuarioServicio) REFERENCES Usuarios (PkIdUsuario);
+
+create table Reserva(
+PkIdReserva int AUTO_INCREMENT PRIMARY KEY,
+FkIdSucursalBarberiaReserva int NOT NULL,
+FkIdUsuarioReserva int NOT NULL,
+FkIdUsuarioBarbero int NOT NULL,
+FkIdServicioReserva int NOT NULL,
+Dia char(1) NOT NULL,
+HoraInicial time NOT NULL,
+Estado boolean NOT NULL
+);
+
+ALTER TABLE Reserva ADD CONSTRAINT FkIdSucursalBarberiaReserva FOREIGN KEY (FkIdSucursalBarberiaReserva) REFERENCES SucursalBarberia (PkIdSucursalBarberia);
+ALTER TABLE Reserva ADD CONSTRAINT FkIdUsuarioReserva FOREIGN KEY (FkIdUsuarioReserva) REFERENCES Usuarios (PkIdUsuario);
+ALTER TABLE Reserva ADD CONSTRAINT FkIdServicioReserva FOREIGN KEY (FkIdServicioReserva) REFERENCES Servicio (PkIdServicio);
+ALTER TABLE Reserva ADD CONSTRAINT FkIdUsuarioBarbero FOREIGN KEY (FkIdUsuarioBarbero) REFERENCES Usuarios (PkIdUsuario);
+
+
+INSERT INTO `provincia` (`PkIdProvincia`, `Provincia`, `Estado`) VALUES (NULL, 'Alajuela', '1');
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '1', 'San Ramon', '1');
+INSERT INTO `barberia` (`PkIdBarberia`, `Nombre`, `Descripcion`, `Estado`) VALUES (NULL, 'Tapia', 'Tapia', '1');
+INSERT INTO `sucursalbarberia` (`PkIdSucursalBarberia`, `FkIdCantonSucursalBarberia`, `FkIdBarberiaSucursalBarberia`, `Descripcion`, `DetalleDireccion`, `Estado`) VALUES (NULL, '1', '1', 'Tapia 1', 'por la escuela', '1');
+
+INSERT INTO `usuarios` (`PkIdUsuario`, `FkIdSucursalBarberiaUsuario`, `Nombre`, `PrimerApellido`, `SegundoApellido`, `Usuario`, `Contrasenna`, `Tipo`, `Estado`, Rol,TiempoBarbero  ) VALUES (NULL, '1', 'Amor', 'Lobo', 'Porras', 'amor', '123', 'N', '1','BR','20');
+
+
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '1', 'Moravia', '1'), (NULL, '1', 'Montes De Oca', '1');
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '1', 'Curridabat', '1'), (NULL, '1', 'Pérez Zeledón', '1'), (NULL, '1', 'León Cortés Castro', '1');
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '2', 'Central', '1'), (NULL, '2', 'San Ramón', '1'), (NULL, '2', 'Grecia', '1'), (NULL, '2', 'San Mateo', '1'), (NULL, '2', 'Atenas', '1'), (NULL, '2', 'Naranjo', '1'), (NULL, '2', 'Palmares', '1'), (NULL, '2', 'Poás', '1'), (NULL, '2', 'Orotina', '1'), (NULL, '2', 'San Carlos', '1');
+
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '3', 'Alvarado', '1'), (NULL, '3', 'Oreamuno', '1'), (NULL, '3', 'El Guarco', '1'), (NULL, '4', 'Central', '1'), (NULL, '4', 'Barva', '1'), (NULL, '4', 'Santo Domingo', '1'), (NULL, '4', 'Santa Barbara', '1'), (NULL, '4', 'San Isidro', '1'), (NULL, '4', 'San Rafael', '1'), (NULL, '4', 'Belén', '1');
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '5', 'Tilarán', '1'), (NULL, '5', 'Nandayure', '1'), (NULL, '5', 'La Cruz', '1'), (NULL, '5', 'Hojancha', '1'), (NULL, '6', 'Central', '1'), (NULL, '6', 'Esparza', '1'), (NULL, '6', 'Buenos Aires', '1'), (NULL, '6', 'Montes De Oro', '1'), (NULL, '6', 'Osa', '1'), (NULL, '6', 'Quepos', '1'), (NULL, '6', 'Golfito', '1'), (NULL, '6', 'Coto Brus', '1'), (NULL, '6', 'Parrita', '1'), (NULL, '6', 'Corredores', '1'), (NULL, '6', 'Garabito', '1');
+INSERT INTO `canton` (`PkIdCanton`, `FkIdProvinciaCanton`, `Canton`, `Estado`) VALUES (NULL, '7', 'Central', '1'), (NULL, '7', 'Pococí', '1'), (NULL, '7', 'Siquirres', '1'), (NULL, '7', 'Talamanca', '1'), (NULL, '7', 'Guacimo', '1'), (NULL, '7', 'Guácimo', '1');
